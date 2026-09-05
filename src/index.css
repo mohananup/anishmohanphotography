@@ -1,46 +1,114 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Design tokens — the single source of truth.
+   Tailwind v4 reads this block; there is no tailwind.config.js.
+   ============================================================ */
+
 @theme {
-  /* Cream & Olive Theme */
-  --color-nature-950: #faf9f7;
-  /* Cream White - Background */
-  --color-nature-900: #e7e1d5;
-  /* Desert Beige - Secondary */
-  --color-nature-800: #d4c9b3;
-  --color-nature-700: #c1b191;
-  --color-nature-600: #b8c2a1;
-  /* Pale Olive - Accent */
-  --color-nature-500: #8dae92;
-  --color-nature-400: #6e7b62;
-  --color-nature-300: #4f5a3a;
-  --color-nature-200: #3e472e;
-  --color-nature-100: #4f5a3a;
-  /* Deep Olive - Action/Dark Accent */
-  --color-nature-50: #2c2b29;
-  /* Dark Umber - Text */
+  /* ---- Palette -------------------------------------------------
+     A neutral grey ground with a faint olive bias, so the only
+     colour on screen comes from the photographs. One accent:
+     the old brand olive with the saturation pushed up until it
+     is actually visible.
+  ---------------------------------------------------------------- */
 
-  --color-brand-600: #4f5a3a;
-  /* Deep Olive */
-  --color-brand-500: #b8c2a1;
-  /* Pale Olive */
-  --color-brand-400: #c5cdb3;
-  --color-brand-300: #d2d9c5;
+  --color-paper: #ededE7;
+  --color-surface: #e3e3db;
+  --color-ink: #191b15;
+  --color-soft: #3a3e33;
+  --color-muted: #6a6e60;
+  --color-rule: #d2d4c8;
+  --color-accent: #5e7a00;
+  --color-accent-deep: #465c00;
 
-  --font-sans: "Montserrat", sans-serif;
-  --font-serif: "Source Serif 4", serif;
+  /* ---- Legacy aliases ------------------------------------------
+     Existing components still use nature-* / brand-* class names.
+     These map the old names onto the new palette so nothing breaks
+     while phases 02–06 migrate the markup to semantic names.
+     Delete this block once no component references them.
+  ---------------------------------------------------------------- */
+
+  --color-nature-950: #ededE7;
+  --color-nature-900: #e3e3db;
+  --color-nature-800: #dcdcd2;
+  --color-nature-700: #d2d4c8;
+  --color-nature-500: #6a6e60;
+  --color-nature-400: #6a6e60;
+  --color-nature-300: #3a3e33;
+  --color-nature-200: #23261e;
+  --color-nature-100: #191b15;
+  --color-nature-50: #191b15;
+
+  --color-brand-600: #465c00;
+  --color-brand-500: #5e7a00;
+  --color-brand-400: #6f8f00;
+  --color-brand-300: #86a81a;
+
+  /* ---- Type ----------------------------------------------------
+     Four steps. Hierarchy comes from size, not from weight —
+     the display face is Source Serif 4 at 300.
+  ---------------------------------------------------------------- */
+
+  --font-sans: "Montserrat", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --text-display: clamp(2.5rem, 8vw, 5.5rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.02em;
+
+  --text-section: clamp(1.75rem, 4vw, 2.75rem);
+  --text-section--line-height: 1.1;
+  --text-section--letter-spacing: -0.01em;
+
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.6;
+
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.5;
+  --text-eyebrow--letter-spacing: 0.14em;
+
+  /* ---- Rhythm --------------------------------------------------
+     One gap governs the whole flow: photographs and text plates
+     alike. Measured off 1x.com, where it is constant at 117px.
+  ---------------------------------------------------------------- */
+
+  --spacing-flow: 117px;
+  --spacing-plate: 720px;
+  --spacing-plate-tall: 630px;
 }
 
 @layer base {
   body {
-    @apply bg-nature-950 text-nature-50 antialiased;
+    @apply bg-paper text-ink font-sans antialiased;
+    font-size: var(--text-body);
+    line-height: 1.6;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-serif;
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-light;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+}
+
+@layer utilities {
+  /* The caption rail — title and location set vertically beside
+     each photograph. Flips horizontal on narrow screens. */
+  .rail {
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 800px) {
+    .rail {
+      writing-mode: horizontal-tb;
+      white-space: normal;
+    }
   }
 }

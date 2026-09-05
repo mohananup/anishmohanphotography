@@ -31,10 +31,29 @@ export default defineType({
             title: 'Caption',
             type: 'text',
         }),
+        defineField({
+            name: 'location',
+            title: 'Location',
+            type: 'string',
+            description: 'Shown in the caption rail, e.g. "Kabini" or "Ranganathittu".',
+        }),
+        defineField({
+            name: 'date',
+            title: 'Date',
+            type: 'date',
+            description: 'Shown in the caption rail alongside the location.',
+        }),
+        defineField({
+            name: 'order',
+            title: 'Order',
+            type: 'number',
+            description: 'Lower numbers appear first in the flow. Leave blank to fall back to upload date.',
+        }),
     ],
     preview: {
         select: {
             title: 'title',
+            subtitle: 'location',
             media: 'image',
         },
     },
