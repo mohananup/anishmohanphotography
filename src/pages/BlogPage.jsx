@@ -83,11 +83,11 @@ const BlogPage = () => {
 
     return (
         <div className="pt-28 px-4 sm:px-6 lg:px-8 bg-nature-950 min-h-screen">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-[56rem] mx-auto">
                 <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-4xl md:text-5xl font-serif text-nature-50 mb-20 text-center"
+                    className="text-section text-ink mb-20 text-center"
                 >
                     Blog
                 </motion.h1>
@@ -102,7 +102,7 @@ const BlogPage = () => {
                             className="border-b border-nature-800 pb-20 last:border-0"
                         >
                             <header className="mb-8 text-center">
-                                <h2 className="text-3xl md:text-4xl font-serif text-nature-50 mb-4 leading-tight">
+                                <h2 className="text-section text-ink mb-4">
                                     {post.title}
                                 </h2>
                                 <div className="text-nature-400 font-light">
