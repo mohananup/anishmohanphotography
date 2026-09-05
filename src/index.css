@@ -17,10 +17,11 @@
   --color-surface: #e3e3db;
   --color-ink: #191b15;
   --color-soft: #3a3e33;
-  --color-muted: #6a6e60;
+  --color-muted: #666a5c;
   --color-rule: #d2d4c8;
-  --color-accent: #5e7a00;
+  --color-accent: #587100;
   --color-accent-deep: #465c00;
+  --color-onaccent: #ffffff;
 
   /* ---- Legacy aliases ------------------------------------------
      Existing components still use nature-* / brand-* class names.
@@ -33,15 +34,15 @@
   --color-nature-900: #e3e3db;
   --color-nature-800: #dcdcd2;
   --color-nature-700: #d2d4c8;
-  --color-nature-500: #6a6e60;
-  --color-nature-400: #6a6e60;
+  --color-nature-500: #666a5c;
+  --color-nature-400: #666a5c;
   --color-nature-300: #3a3e33;
   --color-nature-200: #23261e;
   --color-nature-100: #191b15;
   --color-nature-50: #191b15;
 
   --color-brand-600: #465c00;
-  --color-brand-500: #5e7a00;
+  --color-brand-500: #587100;
   --color-brand-400: #6f8f00;
   --color-brand-300: #86a81a;
 
@@ -199,3 +200,54 @@
 .post-body strong { color: var(--color-ink); font-weight: 600; }
 .post-body em { font-style: italic; }
 .post-body img { margin-block: 2em; }
+
+/* ============================================================
+   Dark theme.
+   Only the tokens are redefined — no component rule changes —
+   which is what the single @theme block bought us. The accent
+   lifts to a brighter chartreuse so it still carries on a dark
+   ground, and text on the accent flips to dark.
+   ============================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper: #14160e;
+    --color-surface: #1c1f16;
+    --color-ink: #ebede2;
+    --color-soft: #c8ccbc;
+    --color-muted: #969b88;
+    --color-rule: #2e3225;
+    --color-accent: #a6c927;
+    --color-accent-deep: #8fb01a;
+    --color-onaccent: #14160e;
+
+    /* legacy aliases, same mapping as light */
+    --color-nature-950: #14160e;
+    --color-nature-900: #1c1f16;
+    --color-nature-800: #262a1e;
+    --color-nature-700: #2e3225;
+    --color-nature-500: #969b88;
+    --color-nature-400: #969b88;
+    --color-nature-300: #c8ccbc;
+    --color-nature-200: #dde0d2;
+    --color-nature-100: #ebede2;
+    --color-nature-50: #ebede2;
+
+    --color-brand-600: #8fb01a;
+    --color-brand-500: #a6c927;
+    --color-brand-400: #b8d648;
+    --color-brand-300: #c9e072;
+  }
+
+  /* The mark is dark line art, so it needs lifting off a dark ground.
+     Over the hero photograph it is already inverted to white. */
+  .logo-mark:not(.is-onphoto) {
+    filter: brightness(0) invert(0.92);
+  }
+}
+
+.logo-mark.is-onphoto { filter: brightness(0) invert(1); }
+
+@media (prefers-color-scheme: dark) {
+  ::selection { background: var(--color-accent); color: var(--color-onaccent); }
+}

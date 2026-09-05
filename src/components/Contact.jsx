@@ -94,7 +94,7 @@ const Contact = () => {
                         <button
                             type="submit"
                             disabled={status === 'submitting'}
-                            className="text-eyebrow mt-1 self-start bg-accent px-6 py-3 font-mono uppercase text-white transition-opacity hover:opacity-85 disabled:opacity-50"
+                            className="text-eyebrow mt-1 self-start bg-accent px-6 py-3 font-mono uppercase text-onaccent transition-opacity hover:opacity-85 disabled:opacity-50"
                         >
                             {status === 'submitting' ? 'Sending' : 'Send message'}
                         </button>

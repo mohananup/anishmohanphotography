@@ -109,7 +109,7 @@ const Navbar = () => {
                     <img
                         src={logoMark}
                         alt=""
-                        className={`h-7 w-auto shrink-0 object-contain ${onPhoto ? 'brightness-0 invert' : ''}`}
+                        className={`logo-mark h-7 w-auto shrink-0 object-contain ${onPhoto ? 'is-onphoto' : ''}`}
                     />
                     <span
                         className={`text-eyebrow hidden shrink-0 font-mono uppercase sm:block ${

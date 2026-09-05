@@ -65,7 +65,7 @@ const Gallery = () => {
                             aria-pressed={filter === loc}
                             className={`text-eyebrow rounded-full border px-4 py-2 font-mono uppercase transition-colors ${
                                 filter === loc
-                                    ? 'border-accent bg-accent text-white'
+                                    ? 'border-accent bg-accent text-onaccent'
                                     : 'border-rule text-muted hover:border-muted hover:text-ink'
                             }`}
                         >
