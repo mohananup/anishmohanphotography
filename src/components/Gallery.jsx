@@ -103,7 +103,7 @@ const Gallery = () => {
 
                                 <figcaption
                                     title={[photo.title, photo.location].filter(Boolean).join(' - ')}
-                                    className="rail mt-3 font-mono text-[0.625rem] tracking-wider text-muted md:absolute md:left-full md:top-0 md:mt-0 md:ml-3 md:h-full md:overflow-hidden"
+                                    className="rail mt-3 text-eyebrow font-mono text-muted md:absolute md:left-full md:top-0 md:mt-0 md:ml-3 md:h-full md:overflow-hidden"
                                 >
                                     <span className="text-ink">{photo.title}</span>
                                     {photo.location && (
