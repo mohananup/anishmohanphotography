@@ -93,13 +93,12 @@ const BlogPage = () => {
                 </motion.h1>
 
                 <div className="space-y-32">
-                    {posts.map((post, index) => (
+                    {posts.map((post) => (
                         <motion.article
                             key={post._id}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-100px" }}
-                            transition={{ duration: 0.8 }}
+                            initial={{ opacity: 0, y: 24 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
                             className="border-b border-nature-800 pb-20 last:border-0"
                         >
                             <header className="mb-8 text-center">
@@ -121,7 +120,7 @@ const BlogPage = () => {
                                 </div>
                             )}
 
-                            <div className="prose prose-invert prose-lg max-w-none">
+                            <div className="post-body">
                                 {post.content && (
                                     <PortableText value={post.content} components={components} />
                                 )}

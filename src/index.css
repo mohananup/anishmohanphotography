@@ -105,10 +105,65 @@
     white-space: nowrap;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 767px) {
     .rail {
       writing-mode: horizontal-tb;
       white-space: normal;
     }
   }
 }
+
+/* ============================================================
+   Post body — Portable Text output.
+   The markup previously used `prose prose-invert prose-lg`, but
+   @tailwindcss/typography is not installed, so those classes did
+   nothing and post content rendered with no spacing at all.
+   These few rules replace the plugin rather than add a dependency.
+   ============================================================ */
+
+.post-body {
+  max-width: 38rem;
+  margin-inline: auto;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--color-soft);
+}
+
+.post-body > * + * { margin-top: 1.25rem; }
+
+.post-body h1,
+.post-body h2,
+.post-body h3,
+.post-body h4 {
+  color: var(--color-ink);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.post-body h1 { font-size: 2rem; }
+.post-body h2 { font-size: 1.625rem; }
+.post-body h3 { font-size: 1.25rem; }
+
+.post-body blockquote {
+  border-left: 2px solid var(--color-accent);
+  padding-left: 1.25rem;
+  font-style: italic;
+  color: var(--color-muted);
+}
+
+.post-body ul,
+.post-body ol { padding-left: 1.4rem; }
+.post-body ul { list-style: disc; }
+.post-body ol { list-style: decimal; }
+.post-body li + li { margin-top: 0.4rem; }
+
+.post-body a {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 3px;
+}
+
+.post-body strong { color: var(--color-ink); font-weight: 600; }
+.post-body img { margin-block: 2rem; }

@@ -57,11 +57,11 @@ const Gallery = () => {
 
                     return (
                         <figure key={photo._id} className={`m-0 flex ${side}`}>
-                            <div className="flex min-w-0 max-w-full flex-col gap-3 md:flex-row md:gap-4">
+                            <div className="relative min-w-0 max-w-full md:pr-8">
                                 <button
                                     type="button"
                                     onClick={() => setSelected(photo)}
-                                    className="min-w-0 cursor-zoom-in border-0 bg-transparent p-0"
+                                    className="block min-w-0 cursor-zoom-in border-0 bg-transparent p-0"
                                     aria-label={`View ${photo.title || 'photograph'} larger`}
                                 >
                                     <img
@@ -75,18 +75,15 @@ const Gallery = () => {
                                     />
                                 </button>
 
-                                <figcaption className="rail text-eyebrow font-mono text-muted">
+                                <figcaption
+                                    title={[photo.title, photo.location].filter(Boolean).join(' - ')}
+                                    className="rail mt-3 font-mono text-[0.625rem] tracking-wider text-muted md:absolute md:left-full md:top-0 md:mt-0 md:ml-3 md:h-full md:overflow-hidden"
+                                >
                                     <span className="text-ink">{photo.title}</span>
                                     {photo.location && (
                                         <>
                                             <span aria-hidden="true">{'  ·  '}</span>
                                             <span className="uppercase">{photo.location}</span>
-                                        </>
-                                    )}
-                                    {photo.date && (
-                                        <>
-                                            <span aria-hidden="true">{'  ·  '}</span>
-                                            <span>{new Date(photo.date).getFullYear()}</span>
                                         </>
                                     )}
                                 </figcaption>

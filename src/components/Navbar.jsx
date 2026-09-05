@@ -79,7 +79,7 @@ const Navbar = () => {
                     <img
                         src={logo}
                         alt=""
-                        className={`h-9 w-auto object-contain ${onPhoto ? 'brightness-0 invert' : ''}`}
+                        className={`h-11 w-auto object-contain ${onPhoto ? 'brightness-0 invert' : ''}`}
                     />
                 </a>
 
