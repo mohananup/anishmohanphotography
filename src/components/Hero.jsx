@@ -1,106 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
 import { client, urlFor } from '../client';
 
-// Fallback images in case Sanity has no data
-const fallbackImages = [
-    "https://images.unsplash.com/photo-1530728327726-b504480e42ec?q=100&w=5589&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1503431128871-cd250803fa41?q=100&w=5184&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1731650211720-54d314975a7b?q=100&w=5000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1444464666168-49d633b86797?ixlib=rb-4.0.3&auto=format&fit=crop&w=5000&q=80"
-];
+// Used only until the homePage singleton has an image.
+const fallbackImage =
+    "https://images.unsplash.com/photo-1530728327726-b504480e42ec?q=100&w=2560&auto=format&fit=crop";
 
 const Hero = () => {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [heroImages, setHeroImages] = useState(fallbackImages.map(url => ({ desktop: url, mobile: url })));
-    const [loading, setLoading] = useState(true);
+    const [image, setImage] = useState({ desktop: fallbackImage, mobile: fallbackImage });
 
     useEffect(() => {
-        // Fetch hero images from Sanity
-        const query = '*[_type == "homePage"][0]{heroImages}';
-        client.fetch(query)
+        client
+            .fetch('*[_type == "homePage"][0]{heroImages}')
             .then((data) => {
-                if (data?.heroImages?.length > 0) {
-                    // Transform Sanity image objects to responsive URLs
-                    const responsiveImages = data.heroImages.map(img => ({
-                        // Desktop: Wide, high quality
-                        desktop: urlFor(img).width(2560).quality(90).auto('format').url(),
-                        // Mobile: Vertical crop, respecting hotspot
-                        mobile: urlFor(img).width(720).height(1080).fit('crop').quality(85).auto('format').url()
-                    }));
-                    setHeroImages(responsiveImages);
-                }
-                setLoading(false);
+                const first = data?.heroImages?.[0];
+                if (!first) return;
+                setImage({
+                    desktop: urlFor(first).width(2560).quality(90).auto('format').url(),
+                    mobile: urlFor(first).width(900).height(1200).fit('crop').quality(85).auto('format').url(),
+                });
             })
-            .catch((err) => {
-                console.error("Failed to fetch hero images:", err);
-                setLoading(false);
-            });
+            .catch((err) => console.error('Failed to fetch hero image:', err));
     }, []);
 
-    useEffect(() => {
-        if (heroImages.length <= 1) return; // No slideshow if 0 or 1 image
-
-        const interval = setInterval(() => {
-            setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-        }, 5000);
-
-        return () => clearInterval(interval);
-    }, [heroImages]);
-
-    const currentImage = heroImages[currentImageIndex];
-
     return (
-        <div id="home" className="relative h-screen w-full overflow-hidden bg-nature-950">
-            {/* Background Image Slideshow */}
-            <AnimatePresence mode="popLayout">
-                <motion.div
-                    key={currentImageIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1.5 }}
-                    className="absolute inset-0"
-                >
-                    <picture className="absolute inset-0 w-full h-full">
-                        <source media="(max-width: 768px)" srcSet={currentImage.mobile} />
-                        <img
-                            src={currentImage.desktop}
-                            alt="Hero Background"
-                            className="w-full h-full object-cover"
-                            style={{ filter: 'brightness(1.1)' }}
-                        />
-                    </picture>
-                </motion.div>
-            </AnimatePresence>
+        <header
+            id="home"
+            className="relative flex h-[78vh] min-h-[420px] items-end overflow-hidden bg-paper"
+        >
+            <picture className="absolute inset-0">
+                <source media="(max-width: 768px)" srcSet={image.mobile} />
+                <img
+                    src={image.desktop}
+                    alt=""
+                    className="h-full w-full object-cover"
+                />
+            </picture>
 
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/40 z-10" />
+            {/* Scrim — keeps the type legible whichever frame sits behind it. */}
+            <div
+                className="absolute inset-0"
+                style={{
+                    background:
+                        'linear-gradient(to top, rgba(8,10,6,0.74) 0%, rgba(8,10,6,0.28) 40%, rgba(8,10,6,0) 70%)',
+                }}
+            />
 
-            {/* Content */}
-            <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white text-lg font-serif font-light"
-                >
-                    Anish Mohan Photography
-                </motion.div>
-
-
-                {/* Scroll Indicator */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2, duration: 1 }}
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce"
-                >
-                    <ChevronDown className="h-8 w-8 text-white/70" />
-                </motion.div>
+            <div className="relative mx-auto w-full max-w-[1100px] px-6 pb-12">
+                <h1 className="text-display mb-3 text-[#F4F5EE]">Anish Mohan</h1>
+                <p className="text-eyebrow font-mono uppercase text-[#F4F5EE]/80">
+                    Wildlife photography &mdash; Western Ghats &amp; beyond
+                </p>
             </div>
-        </div>
+        </header>
     );
 };
 

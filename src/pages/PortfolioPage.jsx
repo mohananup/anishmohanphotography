@@ -24,11 +24,11 @@ const PortfolioPage = () => {
             });
     }, []);
 
-    if (loading) return <div className="pt-56 px-4 text-center text-nature-50">Loading...</div>;
-    if (error) return <div className="pt-56 px-4 text-center text-red-600">Error: {error}. Please check your Sanity CORS settings.</div>;
+    if (loading) return <div className="pt-28 px-4 text-center text-nature-50">Loading...</div>;
+    if (error) return <div className="pt-28 px-4 text-center text-red-600">Error: {error}. Please check your Sanity CORS settings.</div>;
 
     return (
-        <div className="pt-56 px-4 sm:px-6 lg:px-8 bg-nature-950 min-h-screen pb-20">
+        <div className="pt-28 px-4 sm:px-6 lg:px-8 bg-nature-950 min-h-screen pb-20">
             <div className="max-w-7xl mx-auto">
                 <motion.h1
                     initial={{ opacity: 0, y: 20 }}

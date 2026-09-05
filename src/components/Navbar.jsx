@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Camera } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X } from 'lucide-react';
 
 import logo from '../assets/logo.png';
+
+const navLinks = [
+    { name: 'Work', path: '#gallery' },
+    { name: 'Profile', path: '#profile' },
+    { name: 'Projects', path: '/projects' },
+    { name: 'Portfolio', path: '/portfolio' },
+    { name: 'Journal', path: '/blog' },
+    { name: 'Contact', path: '#contact' },
+];
+
+const BAR_HEIGHT = 56;
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -11,127 +21,114 @@ const Navbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const isHome = location.pathname === '/';
+    // Over the hero photograph the bar is transparent with light type;
+    // once scrolled (or on any inner page) it sits on the paper ground.
+    const onPhoto = isHome && !scrolled;
+
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-        window.addEventListener('scroll', handleScroll);
+        const handleScroll = () => setScrolled(window.scrollY > 40);
+        handleScroll();
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const scrollToHash = (hash) => {
+        const el = document.querySelector(hash);
+        if (!el) return;
+        const top = el.getBoundingClientRect().top + window.scrollY - BAR_HEIGHT;
+        window.scrollTo({ top, behavior: 'smooth' });
+    };
 
     const handleNavigation = (e, path) => {
         e.preventDefault();
         setIsOpen(false);
 
-        if (path.startsWith('#')) {
-            if (location.pathname !== '/') {
-                navigate('/');
-                setTimeout(() => {
-                    const element = document.querySelector(path);
-                    if (element) {
-                        const navHeight = 80;
-                        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                        window.scrollTo({
-                            top: elementPosition - navHeight,
-                            behavior: 'smooth'
-                        });
-                    }
-                }, 300);
-            } else {
-                // Same-page navigation (Home -> Section)
-                // Wait for mobile menu to close (300ms transition)
-                setTimeout(() => {
-                    const element = document.querySelector(path);
-                    if (element) {
-                        const navHeight = 80;
-                        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                        window.scrollTo({
-                            top: elementPosition - navHeight,
-                            behavior: 'smooth'
-                        });
-                    }
-                }, 300);
-            }
-        } else {
+        if (!path.startsWith('#')) {
             navigate(path);
             window.scrollTo(0, 0);
+            return;
+        }
+
+        if (location.pathname !== '/') {
+            navigate('/');
+            setTimeout(() => scrollToHash(path), 300);
+        } else {
+            setTimeout(() => scrollToHash(path), isOpen ? 300 : 0);
         }
     };
 
-    const navLinks = [
-        { name: 'Home', path: '#home' },
-        { name: 'Profile', path: '#profile' },
-        { name: 'Projects', path: '/projects' },
-        { name: 'Portfolio', path: '/portfolio' },
-        { name: 'Blog', path: '/blog' },
-        { name: 'Contact', path: '#contact' },
-    ];
-
-    const isHome = location.pathname === '/';
-    const textColor = scrolled || !isHome ? 'text-nature-100' : 'text-white';
-    const buttonColor = scrolled || !isHome ? 'text-nature-100' : 'text-white';
+    const isActive = (path) =>
+        path.startsWith('/') && location.pathname === path;
 
     return (
         <nav
-            className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md py-0 shadow-sm' : 'bg-transparent py-0'
-                }`}
+            className={`fixed inset-x-0 top-0 z-50 h-14 transition-colors duration-300 ${
+                onPhoto
+                    ? 'bg-gradient-to-b from-black/45 to-transparent'
+                    : 'border-b border-rule bg-paper/85 backdrop-blur-md'
+            }`}
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col items-center justify-center">
-                    <a href="/" onClick={(e) => handleNavigation(e, '#home')} className="flex items-center justify-center group mb-[-1rem] mt-[-1.5rem]">
-                        <img src={logo} alt="Logo" className="h-40 w-auto object-contain" />
-                    </a>
+            <div className="mx-auto flex h-14 max-w-[1100px] items-center justify-between px-6">
+                <a
+                    href="/"
+                    onClick={(e) => handleNavigation(e, '#home')}
+                    className="flex items-center"
+                    aria-label="Anish Mohan Photography — home"
+                >
+                    <img
+                        src={logo}
+                        alt=""
+                        className={`h-9 w-auto object-contain ${onPhoto ? 'brightness-0 invert' : ''}`}
+                    />
+                </a>
 
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:flex space-x-8">
+                <div className="hidden items-center gap-7 md:flex">
+                    {navLinks.map((link) => (
+                        <a
+                            key={link.name}
+                            href={link.path}
+                            onClick={(e) => handleNavigation(e, link.path)}
+                            aria-current={isActive(link.path) ? 'page' : undefined}
+                            className={`text-eyebrow border-b font-mono uppercase transition-colors ${
+                                onPhoto
+                                    ? 'border-transparent text-white/75 hover:text-white'
+                                    : isActive(link.path)
+                                        ? 'border-accent text-ink'
+                                        : 'border-transparent text-muted hover:text-ink'
+                            }`}
+                        >
+                            {link.name}
+                        </a>
+                    ))}
+                </div>
+
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    aria-expanded={isOpen}
+                    aria-label={isOpen ? 'Close menu' : 'Open menu'}
+                    className={`md:hidden ${onPhoto ? 'text-white' : 'text-ink'}`}
+                >
+                    {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                </button>
+            </div>
+
+            {isOpen && (
+                <div className="border-b border-rule bg-paper md:hidden">
+                    <div className="flex flex-col gap-4 px-6 py-6">
                         {navLinks.map((link) => (
                             <a
                                 key={link.name}
-                                href={`${import.meta.env.BASE_URL}${link.path.startsWith('/') ? link.path.slice(1) : link.path}`}
+                                href={link.path}
                                 onClick={(e) => handleNavigation(e, link.path)}
-                                className={`text-sm font-medium tracking-widest hover:text-brand-500 transition-colors cursor-pointer ${textColor}`}
+                                className="text-eyebrow font-mono uppercase text-ink"
                             >
-                                {link.name.toUpperCase()}
+                                {link.name}
                             </a>
                         ))}
                     </div>
-
-                    {/* Mobile Menu Button */}
-                    <div className="md:hidden absolute right-4 top-4">
-                        <button
-                            onClick={() => setIsOpen(!isOpen)}
-                            className={`hover:text-brand-500 transition-colors ${buttonColor}`}
-                        >
-                            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                        </button>
-                    </div>
                 </div>
-            </div>
-
-            {/* Mobile Navigation */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden bg-nature-900/95 backdrop-blur-lg overflow-hidden"
-                    >
-                        <div className="px-4 pt-2 pb-8 space-y-4 flex flex-col items-center">
-                            {navLinks.map((link) => (
-                                <a
-                                    key={link.name}
-                                    href={`${import.meta.env.BASE_URL}${link.path.startsWith('/') ? link.path.slice(1) : link.path}`}
-                                    className="text-lg font-medium tracking-widest text-nature-50 hover:text-brand-500 transition-colors cursor-pointer"
-                                    onClick={(e) => handleNavigation(e, link.path)}
-                                >
-                                    {link.name.toUpperCase()}
-                                </a>
-                            ))}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            )}
         </nav>
     );
 };
