@@ -98,6 +98,30 @@
 }
 
 @layer utilities {
+  /* Shared link treatment for header and footer. The current route or
+     section is underlined in the accent; hover previews it faintly. */
+  .navlink {
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: color 150ms ease, border-color 150ms ease;
+  }
+  .navlink:hover {
+    color: var(--color-ink);
+    border-bottom-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  }
+  .navlink[aria-current] {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-accent);
+  }
+
+  /* Over a photograph the same states have to read on dark. */
+  .navlink-onphoto { color: rgb(255 255 255 / 0.75); }
+  .navlink-onphoto:hover { color: #fff; }
+  .navlink-onphoto[aria-current] {
+    color: #fff;
+    border-bottom-color: #A6C927;
+  }
+
   /* The caption rail — title and location set vertically beside
      each photograph. Flips horizontal on narrow screens. */
   .rail {

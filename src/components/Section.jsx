@@ -1,44 +1,29 @@
 import React from 'react';
 
 /**
- * One wrapper for every band on the page — photographs and text alike.
+ * A text plate in the flow.
  *
- * The whole site is a single vertical flow of "plates" separated by one
- * constant gap. This component owns that rhythm so a spacing change is a
- * one-file edit rather than a six-file sweep.
- *
- * Props:
- *   eyebrow  small uppercase label above the heading
- *   title    section heading, rendered in the display face
- *   side     'l' | 'r' — which edge of the track the plate sits against
- *   as       element to render as (default 'section')
+ * Photographs and prose share one track and one gap, so this owns the
+ * repeated part: the track width, which edge the plate sits against, and
+ * the eyebrow/heading pair. A spacing change is a one-file edit.
  */
-const Section = ({
-    id,
-    eyebrow,
-    title,
-    side = 'l',
-    as: Tag = 'section',
-    className = '',
-    children,
-}) => {
-    const align = side === 'r' ? 'justify-end' : 'justify-start';
-
-    return (
-        <Tag id={id} className={`flex ${align} ${className}`}>
-            <div className="min-w-0 max-w-[34rem]">
+const Section = ({ id, eyebrow, title, side = 'l', className = '', children }) => (
+    <section
+        id={id}
+        className={`mx-auto w-full max-w-[1100px] px-6 ${className}`}
+    >
+        <div className={`flex ${side === 'r' ? 'justify-end' : 'justify-start'}`}>
+            <div className="w-full max-w-[34rem]">
                 {eyebrow && (
-                    <p className="font-mono text-eyebrow uppercase text-accent mb-4">
+                    <p className="text-eyebrow mb-4 font-mono uppercase text-accent">
                         {eyebrow}
                     </p>
                 )}
-                {title && (
-                    <h2 className="text-section text-ink mb-4">{title}</h2>
-                )}
+                {title && <h2 className="text-section mb-4 text-ink">{title}</h2>}
                 {children}
             </div>
-        </Tag>
-    );
-};
+        </div>
+    </section>
+);
 
 export default Section;

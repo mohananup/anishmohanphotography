@@ -14,6 +14,7 @@ const Gallery = () => {
     const [selected, setSelected] = useState(null);
     const [photos, setPhotos] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState('all');
 
     useEffect(() => {
         const query = `*[_type == "portfolio" && defined(image)] | order(order asc, _createdAt desc){
@@ -47,10 +48,35 @@ const Gallery = () => {
 
     if (loading || photos.length === 0) return null;
 
+    // Chips are derived from the locations actually present, so they appear
+    // on their own as the field gets filled in and never need maintaining.
+    const locations = [...new Set(photos.map((p) => p.location).filter(Boolean))].sort();
+    const shown = filter === 'all' ? photos : photos.filter((p) => p.location === filter);
+
     return (
-        <section id="gallery" className="mx-auto w-full max-w-[1100px] px-6 pt-flow">
+        <section id="gallery" className="mx-auto w-full max-w-[1100px] px-6">
+            {locations.length > 1 && (
+                <div className="mb-flow flex flex-wrap gap-2" role="group" aria-label="Filter by location">
+                    {['all', ...locations].map((loc) => (
+                        <button
+                            key={loc}
+                            type="button"
+                            onClick={() => setFilter(loc)}
+                            aria-pressed={filter === loc}
+                            className={`text-eyebrow rounded-full border px-4 py-2 font-mono uppercase transition-colors ${
+                                filter === loc
+                                    ? 'border-accent bg-accent text-white'
+                                    : 'border-rule text-muted hover:border-muted hover:text-ink'
+                            }`}
+                        >
+                            {loc === 'all' ? 'All' : loc}
+                        </button>
+                    ))}
+                </div>
+            )}
+
             <div className="flex flex-col gap-flow">
-                {photos.map((photo, i) => {
+                {shown.map((photo, i) => {
                     const w = photo.dims?.width;
                     const h = photo.dims?.height;
                     const side = i % 2 === 0 ? 'justify-start' : 'justify-end';

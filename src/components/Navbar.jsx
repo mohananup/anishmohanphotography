@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
-import logo from '../assets/logo.png';
+import logoMark from '../assets/logo-mark.png';
 
 const navLinks = [
     { name: 'Work', path: '#gallery' },
@@ -14,16 +14,18 @@ const navLinks = [
 ];
 
 const BAR_HEIGHT = 56;
+const sectionIds = navLinks
+    .filter((l) => l.path.startsWith('#'))
+    .map((l) => l.path.slice(1));
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [activeSection, setActiveSection] = useState(null);
     const location = useLocation();
     const navigate = useNavigate();
 
     const isHome = location.pathname === '/';
-    // Over the hero photograph the bar is transparent with light type;
-    // once scrolled (or on any inner page) it sits on the paper ground.
     const onPhoto = isHome && !scrolled;
 
     useEffect(() => {
@@ -32,6 +34,30 @@ const Navbar = () => {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Scroll-spy: underline whichever section is currently being read.
+    useEffect(() => {
+        // isActive() already gates on isHome, so stale state is harmless.
+        if (!isHome) return;
+
+        const els = sectionIds
+            .map((id) => document.getElementById(id))
+            .filter(Boolean);
+        if (els.length === 0) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const visible = entries
+                    .filter((e) => e.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+                if (visible) setActiveSection(visible.target.id);
+            },
+            { rootMargin: `-${BAR_HEIGHT + 8}px 0px -55% 0px`, threshold: [0, 0.25, 0.5] }
+        );
+
+        els.forEach((el) => observer.observe(el));
+        return () => observer.disconnect();
+    }, [isHome, location.pathname]);
 
     const scrollToHash = (hash) => {
         const el = document.querySelector(hash);
@@ -50,6 +76,8 @@ const Navbar = () => {
             return;
         }
 
+        setActiveSection(path.slice(1));
+
         if (location.pathname !== '/') {
             navigate('/');
             setTimeout(() => scrollToHash(path), 300);
@@ -59,7 +87,9 @@ const Navbar = () => {
     };
 
     const isActive = (path) =>
-        path.startsWith('/') && location.pathname === path;
+        path.startsWith('/')
+            ? location.pathname === path
+            : isHome && activeSection === path.slice(1);
 
     return (
         <nav
@@ -73,14 +103,21 @@ const Navbar = () => {
                 <a
                     href="/"
                     onClick={(e) => handleNavigation(e, '#home')}
-                    className="flex items-center"
+                    className="flex items-center gap-2.5"
                     aria-label="Anish Mohan Photography — home"
                 >
                     <img
-                        src={logo}
+                        src={logoMark}
                         alt=""
-                        className={`h-11 w-auto object-contain ${onPhoto ? 'brightness-0 invert' : ''}`}
+                        className={`h-7 w-auto shrink-0 object-contain ${onPhoto ? 'brightness-0 invert' : ''}`}
                     />
+                    <span
+                        className={`text-eyebrow hidden shrink-0 font-mono uppercase sm:block ${
+                            onPhoto ? 'text-white' : 'text-ink'
+                        }`}
+                    >
+                        Anish Mohan
+                    </span>
                 </a>
 
                 <div className="hidden items-center gap-7 md:flex">
@@ -90,12 +127,8 @@ const Navbar = () => {
                             href={link.path}
                             onClick={(e) => handleNavigation(e, link.path)}
                             aria-current={isActive(link.path) ? 'page' : undefined}
-                            className={`text-eyebrow border-b font-mono uppercase transition-colors ${
-                                onPhoto
-                                    ? 'border-transparent text-white/75 hover:text-white'
-                                    : isActive(link.path)
-                                        ? 'border-accent text-ink'
-                                        : 'border-transparent text-muted hover:text-ink'
+                            className={`navlink text-eyebrow font-mono uppercase ${
+                                onPhoto ? 'navlink-onphoto' : 'text-muted'
                             }`}
                         >
                             {link.name}
@@ -115,13 +148,14 @@ const Navbar = () => {
 
             {isOpen && (
                 <div className="border-b border-rule bg-paper md:hidden">
-                    <div className="flex flex-col gap-4 px-6 py-6">
+                    <div className="flex flex-col items-start gap-4 px-6 py-6">
                         {navLinks.map((link) => (
                             <a
                                 key={link.name}
                                 href={link.path}
                                 onClick={(e) => handleNavigation(e, link.path)}
-                                className="text-eyebrow font-mono uppercase text-ink"
+                                aria-current={isActive(link.path) ? 'page' : undefined}
+                                className="navlink text-eyebrow font-mono uppercase text-muted"
                             >
                                 {link.name}
                             </a>

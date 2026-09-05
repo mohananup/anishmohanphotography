@@ -1,53 +1,43 @@
-
 import React from 'react';
-import { motion } from 'framer-motion';
+import Section from './Section';
 import aboutImage from '../assets/misc_images/Anish Mohan.JPG';
 
-const About = () => {
-    return (
-        <div id="profile" className="py-20 px-4 sm:px-6 lg:px-8 bg-nature-950 min-h-screen flex items-center">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <img
-                        src={aboutImage}
-                        alt="Photographer in nature"
-                        className="rounded-lg shadow-2xl"
-                    />
-                </motion.div>
-
-                <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                >
-                    <h2 className="text-4xl font-serif text-nature-50 mb-6">Behind the Lens</h2>
-                    <p className="text-lg text-nature-300 mb-6 leading-relaxed">
-                        Hello, I'm Anish. My journey into wildlife photography began with a simple curiosity about the birds in my backyard.
-                        That curiosity quickly blossomed into a passionate pursuit of capturing the untold stories of the natural world.
-                    </p>
-                    <p className="text-lg text-nature-300 mb-6 leading-relaxed">
-                        I believe that every photograph has the power to inspire conservation and appreciation for our planet's biodiversity.
-                        Through my lens, I hope to bring you closer to the wild, showing you the intricate details and raw emotions of nature
-                        that often go unnoticed.
-                    </p>
-                    <div className="grid grid-cols-2 gap-6 mt-8">
-                        <div className="text-center p-4 bg-nature-900 rounded-lg">
-                            <span className="block text-3xl font-bold text-nature-100">5+</span>
-                            <span className="text-sm text-nature-400">Years Experience</span>
-                        </div>
-                        <div className="text-center p-4 bg-nature-900 rounded-lg">
-                            <span className="block text-3xl font-bold text-nature-100">50+</span>
-                            <span className="text-sm text-nature-400">Species Documented</span>
-                        </div>
-                    </div>
-                </motion.div>
+/**
+ * Plates in the flow — a portrait, then the prose. No min-h-screen, and no
+ * stat cards: those numbers were hardcoded in JSX and would have gone stale
+ * without anyone noticing.
+ */
+const About = () => (
+    <div id="profile" className="flex flex-col gap-flow">
+        <div className="mx-auto w-full max-w-[1100px] px-6">
+            <div className="flex justify-end">
+                <img
+                    src={aboutImage}
+                    alt="Anish Mohan in the field"
+                    loading="lazy"
+                    decoding="async"
+                    className="h-auto w-auto max-w-plate object-contain md:max-h-plate-tall"
+                />
             </div>
         </div>
-    );
-};
+
+        <Section
+            eyebrow="Behind the lens"
+            title={<>Curiosity about the birds in a backyard, and then it wouldn&rsquo;t stop.</>}
+            side="l"
+        >
+            <p className="mb-4 text-muted">
+                I&rsquo;m Anish. What began as idle attention to the birds outside my window turned
+                into a slow, deliberate pursuit of the natural world &mdash; mostly at the edges of
+                the day, when the light is worth waiting for.
+            </p>
+            <p className="text-muted">
+                Much of the work is sitting still until something decides you aren&rsquo;t a threat.
+                I photograph in the hope that a single frame can make someone care about an animal
+                they will never meet.
+            </p>
+        </Section>
+    </div>
+);
 
 export default About;

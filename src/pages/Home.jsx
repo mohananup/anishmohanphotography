@@ -3,20 +3,20 @@ import Hero from '../components/Hero';
 import Gallery from '../components/Gallery';
 import About from '../components/About';
 import Contact from '../components/Contact';
-import Portfolio from '../components/Portfolio';
-import Blog from '../components/Blog';
 
-const Home = () => {
-    return (
-        <>
-            <Hero />
+/**
+ * One page, one rhythm. Photographs and text alike are plates in a single
+ * vertical flow separated by one constant gap.
+ */
+const Home = () => (
+    <>
+        <Hero />
+        <div className="flex flex-col gap-flow py-flow">
             <Gallery />
             <About />
-            <Portfolio />
-            <Blog />
             <Contact />
-        </>
-    );
-};
+        </div>
+    </>
+);
 
 export default Home;
