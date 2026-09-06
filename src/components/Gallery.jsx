@@ -2,8 +2,19 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { client, urlFor } from '../client';
 
-// Mirrors the list in the portfolio schema; order only, not a whitelist.
-const CATEGORY_ORDER = ['Mammals', 'Birds', 'Reptiles', 'Insects', 'Wetlands', 'Landscapes'];
+// Mirrors the genre list in the portfolio schema. Order only, not a
+// whitelist — an unrecognised value still gets a chip, shown last.
+const CATEGORY_ORDER = ['Wildlife', 'Sports', 'Street'];
+
+// How many plates the flow shows before asking. Deliberately a button and
+// never a scroll trigger: infinite scroll makes the end of the page recede
+// as you approach it, so Contact and the footer become unreachable.
+const BATCH = 12;
+
+// Widths the srcSet offers. Previously every photograph was requested at
+// 1440px, including on a phone, which is roughly four times the pixels a
+// 375px screen can use.
+const WIDTHS = [480, 720, 960, 1440, 1920];
 
 /**
  * The flow.
@@ -18,6 +29,7 @@ const Gallery = () => {
     const [photos, setPhotos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
+    const [limit, setLimit] = useState(BATCH);
 
     useEffect(() => {
         const query = `*[_type == "portfolio" && defined(image)] | order(order asc, _createdAt desc){
@@ -59,7 +71,14 @@ const Gallery = () => {
         ...CATEGORY_ORDER.filter((c) => present.has(c)),
         ...[...present].filter((c) => !CATEGORY_ORDER.includes(c)).sort(),
     ];
-    const shown = filter === 'all' ? photos : photos.filter((p) => p.category === filter);
+    const matching = filter === 'all' ? photos : photos.filter((p) => p.category === filter);
+    const shown = matching.slice(0, limit);
+    const remaining = matching.length - shown.length;
+
+    const pick = (next) => {
+        setFilter(next);
+        setLimit(BATCH); // a new filter starts a fresh batch
+    };
 
     return (
         <section id="gallery" className="mx-auto w-full max-w-[1100px] px-6">
@@ -69,7 +88,7 @@ const Gallery = () => {
                         <button
                             key={loc}
                             type="button"
-                            onClick={() => setFilter(loc)}
+                            onClick={() => pick(loc)}
                             aria-pressed={filter === loc}
                             className={`text-eyebrow rounded-full border px-4 py-2 font-mono uppercase transition-colors ${
                                 filter === loc
@@ -108,6 +127,11 @@ const Gallery = () => {
                                 >
                                     <img
                                         src={urlFor(photo.image).width(1440).quality(85).auto('format').url()}
+                                        srcSet={WIDTHS.map(
+                                            (px) =>
+                                                `${urlFor(photo.image).width(px).quality(85).auto('format').url()} ${px}w`
+                                        ).join(', ')}
+                                        sizes="(max-width: 767px) 100vw, 720px"
                                         alt={photo.image?.alt || photo.title || ''}
                                         width={w}
                                         height={h}
@@ -134,6 +158,18 @@ const Gallery = () => {
                     );
                 })}
             </div>
+
+            {remaining > 0 && (
+                <div className="mt-flow flex justify-center">
+                    <button
+                        type="button"
+                        onClick={() => setLimit(limit + BATCH)}
+                        className="text-eyebrow border border-rule px-6 py-3 font-mono uppercase text-muted transition-colors hover:border-accent hover:text-ink"
+                    >
+                        Load more &middot; {remaining} left
+                    </button>
+                </div>
+            )}
 
             {selected && (
                 <div
