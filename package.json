@@ -11,7 +11,9 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "postbuild": "cp dist/index.html dist/404.html"
+    "postbuild": "cp dist/index.html dist/404.html",
+    "build:preview": "VITE_BASE=/anishmohanphotography/preview/ vite build && npm run postbuild",
+    "deploy:preview": "npm run build:preview && gh-pages -d dist -e preview"
   },
   "dependencies": {
     "@portabletext/react": "^6.0.0",
