@@ -3,24 +3,12 @@ import Section from './Section';
 import aboutImage from '../assets/misc_images/Anish Mohan.JPG';
 
 /**
- * Plates in the flow — a portrait, then the prose. No min-h-screen, and no
+ * Plates in the flow — the prose, then the portrait. No min-h-screen, and no
  * stat cards: those numbers were hardcoded in JSX and would have gone stale
  * without anyone noticing.
  */
 const About = () => (
     <div id="profile" className="flex flex-col gap-flow">
-        <div className="mx-auto w-full max-w-[1100px] px-6">
-            <div className="flex justify-end">
-                <img
-                    src={aboutImage}
-                    alt="Anish Mohan in the field"
-                    loading="lazy"
-                    decoding="async"
-                    className="h-auto w-auto max-w-[min(var(--spacing-plate),100%)] object-contain md:max-h-plate-tall"
-                />
-            </div>
-        </div>
-
         <Section
             eyebrow="Behind the lens"
             title={<>Curiosity about the birds in a backyard, and then it wouldn&rsquo;t stop.</>}
@@ -37,6 +25,18 @@ const About = () => (
                 they will never meet.
             </p>
         </Section>
+
+        <div className="mx-auto w-full max-w-[1100px] px-6">
+            <div className="flex justify-end">
+                <img
+                    src={aboutImage}
+                    alt="Anish Mohan in the field"
+                    loading="lazy"
+                    decoding="async"
+                    className="h-auto w-auto max-w-[min(var(--spacing-plate),100%)] object-contain md:max-h-plate-tall"
+                />
+            </div>
+        </div>
     </div>
 );
 
