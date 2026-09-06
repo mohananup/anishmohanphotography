@@ -79,11 +79,19 @@ const Gallery = () => {
                 {shown.map((photo, i) => {
                     const w = photo.dims?.width;
                     const h = photo.dims?.height;
-                    const side = i % 2 === 0 ? 'justify-start' : 'justify-end';
+                    // Plates alternate edges; the rail always sits in the inner
+                    // gutter, so it never hangs off the side of the viewport.
+                    const atStart = i % 2 === 0;
+                    const side = atStart ? 'justify-start' : 'justify-end';
+                    // The rail sits inside the padding the plate reserves for it.
+                    // left-full/right-full would place it beyond that padding and
+                    // hang it off the viewport at narrow widths.
+                    const railSide = atStart ? 'md:right-0' : 'md:left-0';
+                    const platePad = atStart ? 'md:pr-8' : 'md:pl-8';
 
                     return (
                         <figure key={photo._id} className={`m-0 flex ${side}`}>
-                            <div className="relative min-w-0 max-w-full md:pr-8">
+                            <div className={`relative min-w-0 max-w-full ${platePad}`}>
                                 <button
                                     type="button"
                                     onClick={() => setSelected(photo)}
@@ -97,13 +105,13 @@ const Gallery = () => {
                                         height={h}
                                         loading={i < 2 ? 'eager' : 'lazy'}
                                         decoding="async"
-                                        className="h-auto w-auto max-w-plate object-contain md:max-h-plate-tall"
+                                        className="h-auto w-auto max-w-[min(var(--spacing-plate),100%)] object-contain md:max-h-plate-tall"
                                     />
                                 </button>
 
                                 <figcaption
                                     title={[photo.title, photo.location].filter(Boolean).join(' - ')}
-                                    className="rail mt-3 text-eyebrow font-mono text-muted md:absolute md:left-full md:top-0 md:mt-0 md:ml-3 md:h-full md:overflow-hidden"
+                                    className={`rail mt-3 text-eyebrow font-mono text-muted md:absolute md:top-0 md:mt-0 md:h-full md:overflow-hidden ${railSide}`}
                                 >
                                     <span className="text-ink">{photo.title}</span>
                                     {photo.location && (

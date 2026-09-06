@@ -116,7 +116,10 @@ const Navbar = () => {
                             onPhoto ? 'text-white' : 'text-ink'
                         }`}
                     >
-                        Anish Mohan
+                        Anish Mohan{' '}
+                        <span className={onPhoto ? 'text-white/60' : 'text-muted'}>
+                            Photography
+                        </span>
                     </span>
                 </a>
 

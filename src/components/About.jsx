@@ -16,7 +16,7 @@ const About = () => (
                     alt="Anish Mohan in the field"
                     loading="lazy"
                     decoding="async"
-                    className="h-auto w-auto max-w-plate object-contain md:max-h-plate-tall"
+                    className="h-auto w-auto max-w-[min(var(--spacing-plate),100%)] object-contain md:max-h-plate-tall"
                 />
             </div>
         </div>
