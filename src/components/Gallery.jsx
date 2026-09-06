@@ -27,7 +27,8 @@ const WIDTHS = [480, 720, 960, 1440, 1920];
  * Every photograph obeys two caps and nothing else: landscape frames are
  * capped by width, portrait frames by height, and neither is ever cropped.
  * One constant gap separates them. Plates alternate against the left and
- * right edges of the track, which opens a gutter for the caption rail.
+ * right edges of the track, and each caption sits under its frame, aligned
+ * to the same edge.
  */
 const Gallery = () => {
     const [selected, setSelected] = useState(null);
@@ -111,19 +112,16 @@ const Gallery = () => {
                 {shown.map((photo, i) => {
                     const w = photo.dims?.width;
                     const h = photo.dims?.height;
-                    // Plates alternate edges; the rail always sits in the inner
-                    // gutter, so it never hangs off the side of the viewport.
+                    // Plates alternate edges; the caption sits under the frame
+                    // and hugs the same edge, so it reads left-to-right at a
+                    // normal size instead of being set vertically beside it.
                     const atStart = i % 2 === 0;
                     const side = atStart ? 'justify-start' : 'justify-end';
-                    // The rail sits inside the padding the plate reserves for it.
-                    // left-full/right-full would place it beyond that padding and
-                    // hang it off the viewport at narrow widths.
-                    const railSide = atStart ? 'md:right-0' : 'md:left-0';
-                    const platePad = atStart ? 'md:pr-8' : 'md:pl-8';
+                    const capAlign = atStart ? 'text-left' : 'text-right';
 
                     return (
                         <figure key={photo._id} className={`m-0 flex ${side}`}>
-                            <div className={`relative min-w-0 max-w-full ${platePad}`}>
+                            <div className="min-w-0 max-w-full">
                                 <button
                                     type="button"
                                     onClick={() => setSelected(photo)}
@@ -147,8 +145,7 @@ const Gallery = () => {
                                 </button>
 
                                 <figcaption
-                                    title={[photo.title, photo.location].filter(Boolean).join(' - ')}
-                                    className={`rail mt-3 text-eyebrow font-mono text-muted md:absolute md:top-0 md:mt-0 md:h-full md:overflow-hidden ${railSide}`}
+                                    className={`mt-4 text-eyebrow font-mono text-muted ${capAlign}`}
                                 >
                                     <span className="text-ink">{photo.title}</span>
                                     {photo.location && (

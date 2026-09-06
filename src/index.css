@@ -123,19 +123,6 @@
     border-bottom-color: #A6C927;
   }
 
-  /* The caption rail — title and location set vertically beside
-     each photograph. Flips horizontal on narrow screens. */
-  .rail {
-    writing-mode: vertical-rl;
-    white-space: nowrap;
-  }
-
-  @media (max-width: 767px) {
-    .rail {
-      writing-mode: horizontal-tb;
-      white-space: normal;
-    }
-  }
 }
 
 /* ============================================================
