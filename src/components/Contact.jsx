@@ -4,11 +4,11 @@ import Section from './Section';
 
 // Country code + number, digits only — the format wa.me requires.
 const WHATSAPP_NUMBER = '919845845842';
-// Opens mid-thought on purpose: the visitor's cursor lands right after
-// "about", so they type the one thing they actually came to say instead of
-// facing an empty box. Naming the site gives context on arrival, since a
-// WhatsApp message otherwise carries none.
-const WHATSAPP_TEXT = 'Hi Anish, I found you through your photography site. I wanted to ask about';
+// Names the site, since a WhatsApp message arrives with no other context
+// about where the person came from, then opens on a dash so the cursor
+// lands mid-thought rather than after a full stop. Deliberately does not
+// name a subject: these are general enquiries, not print orders.
+const WHATSAPP_TEXT = 'Hi Anish, I came across your photography site \u2014';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_TEXT)}`;
 
 const details = [
@@ -21,12 +21,12 @@ const Contact = () => (
     <Section
         id="contact"
         eyebrow="Contact"
-        title="Prints, licensing, or a morning in a hide."
+        title="Say hello."
         side="r"
     >
         <p className="mb-8 text-muted">
-            WhatsApp is the quickest way to reach me &mdash; it opens a chat with a
-            message already started.
+            Questions about the work, where a frame was made, or anything else
+            &mdash; WhatsApp is the quickest way to reach me.
         </p>
 
         <a
