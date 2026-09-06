@@ -112,6 +112,17 @@ const Gallery = () => {
                 {shown.map((photo, i) => {
                     const w = photo.dims?.width;
                     const h = photo.dims?.height;
+
+                    // A definite width is what reserves the space. width/height
+                    // attributes only supply the ratio — with width:auto an
+                    // image that has not loaded yet collapses to nothing, and
+                    // every plate below it shifts when it arrives. Resolve the
+                    // display width here from the same two caps the design
+                    // uses: landscape by width, portrait by height.
+                    const ratio = w && h ? w / h : null;
+                    const plateWidth = ratio
+                        ? Math.round(ratio >= 1 ? 720 : 630 * ratio)
+                        : 720;
                     // Plates alternate edges; the caption sits under the frame
                     // and hugs the same edge, so it reads left-to-right at a
                     // normal size instead of being set vertically beside it.
@@ -140,7 +151,11 @@ const Gallery = () => {
                                         height={h}
                                         loading={i < 2 ? 'eager' : 'lazy'}
                                         decoding="async"
-                                        className="h-auto w-auto max-w-[min(var(--spacing-plate),100%)] object-contain md:max-h-plate-tall"
+                                        style={{
+                                            width: `${plateWidth}px`,
+                                            aspectRatio: ratio ? `${w} / ${h}` : undefined,
+                                        }}
+                                        className="h-auto max-w-full object-contain"
                                     />
                                 </button>
 

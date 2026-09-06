@@ -28,13 +28,27 @@ const About = () => (
 
         <div className="mx-auto w-full max-w-[1100px] px-6">
             <div className="flex justify-end">
-                <img
-                    src={aboutImage}
-                    alt="Anish Mohan in the field"
-                    loading="lazy"
-                    decoding="async"
-                    className="h-auto w-auto max-w-[min(var(--spacing-plate),100%)] object-contain md:max-h-plate-tall"
-                />
+                {/* Wrapped so the image is not itself a flex item: as a direct
+                    child it gets shrunk to zero width before it loads, which
+                    is what stopped the space being reserved. */}
+                <div className="min-w-0 max-w-full">
+                {/* A definite width plus the aspect ratio is what actually
+                    reserves the space. width/height attributes alone only
+                    supply the ratio — with width:auto an unloaded image still
+                    collapses to nothing, which is why clicking Contact used to
+                    scroll to a position that then moved when the portrait
+                    arrived, landing the reader here instead. 472x630 is the
+                    3:4 frame at the portrait height cap. */}
+                    <img
+                        src={aboutImage}
+                        alt="Anish Mohan in the field"
+                        width={3000}
+                        height={4000}
+                        loading="lazy"
+                        decoding="async"
+                        className="aspect-[3/4] h-auto w-[472px] max-w-full object-cover"
+                        />
+                </div>
             </div>
         </div>
     </div>
