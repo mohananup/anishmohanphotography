@@ -32,10 +32,17 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+// Vite sets BASE_URL from the build's `base`, so the router follows the
+// deploy target automatically: '/' in dev and on a root-served host,
+// '/anishmohanphotography' in production, '/anishmohanphotography/preview'
+// for the preview build. Hardcoding it meant any second target rendered
+// the layout with no matching route.
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ErrorBoundary>
-      <BrowserRouter basename={import.meta.env.DEV ? '/' : '/anishmohanphotography'}>
+      <BrowserRouter basename={basename}>
         <App />
       </BrowserRouter>
     </ErrorBoundary>
