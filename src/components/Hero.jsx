@@ -18,24 +18,24 @@ const srcsetEntry = (url, px) => `${url.replace(/,/g, '%2C')} ${px}w`;
 
 const HERO_WIDTHS = [1280, 1920, 2560, 3200, 3840];
 
-const fallback = [
-    'https://images.unsplash.com/photo-1530728327726-b504480e42ec?q=100&w=2560&auto=format&fit=crop',
-];
-
 const Hero = () => {
-    const [frames, setFrames] = useState(
-        fallback.map((url) => ({ desktop: url, mobile: url }))
-    );
+    // No placeholder photograph. The original shipped a stock image from
+    // Unsplash as a fallback, so every page load showed a stranger's
+    // photograph in the hero of a photographer's site until Sanity answered.
+    const [frames, setFrames] = useState([]);
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
         client
-            .fetch('*[_type == "homePage"][0]{heroImages}')
+            .fetch(
+                '*[_type == "homePage"][0]{heroImages[]{..., "lqip": asset->metadata.lqip}}'
+            )
             .then((data) => {
                 const images = data?.heroImages;
                 if (!images?.length) return;
                 setFrames(
                     images.map((img) => ({
+                        lqip: img.lqip,
                         desktop: urlFor(img).width(2560).quality(90).auto('format').url(),
                         srcSet: HERO_WIDTHS.map((px) =>
                             srcsetEntry(urlFor(img).width(px).quality(90).auto('format').url(), px)
@@ -67,10 +67,19 @@ const Hero = () => {
     return (
         <header
             id="home"
-            className="relative flex h-svh min-h-[480px] items-end overflow-hidden bg-paper"
+            className="relative flex h-svh min-h-[480px] items-end overflow-hidden bg-[#14160e]"
         >
             {frames.map((frame, i) => (
                 <picture key={frame.desktop} aria-hidden={i !== index}>
+                    {frame.lqip && (
+                        <span
+                            aria-hidden="true"
+                            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[1600ms] ${
+                                i === index ? 'opacity-100' : 'opacity-0'
+                            }`}
+                            style={{ backgroundImage: `url(${frame.lqip})` }}
+                        />
+                    )}
                     <source media="(max-width: 767px)" srcSet={frame.mobile} />
                     <img
                         src={frame.desktop}
