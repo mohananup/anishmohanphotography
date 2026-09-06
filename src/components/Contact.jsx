@@ -4,7 +4,11 @@ import Section from './Section';
 
 // Country code + number, digits only — the format wa.me requires.
 const WHATSAPP_NUMBER = '919845845842';
-const WHATSAPP_TEXT = 'Hi Anish, I saw your photography site.';
+// Opens mid-thought on purpose: the visitor's cursor lands right after
+// "about", so they type the one thing they actually came to say instead of
+// facing an empty box. Naming the site gives context on arrival, since a
+// WhatsApp message otherwise carries none.
+const WHATSAPP_TEXT = 'Hi Anish, I found you through your photography site. I wanted to ask about';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_TEXT)}`;
 
 const details = [
