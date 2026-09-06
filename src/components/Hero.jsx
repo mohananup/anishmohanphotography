@@ -7,6 +7,17 @@ import { client, urlFor } from '../client';
 // photograph.
 const INTERVAL = 9000;
 
+// The hero is full-bleed, so it needs the viewport width times the display's
+// pixel ratio. A single 2560 file covered only 86% of a 1512pt screen at 2x
+// and less on a 16-inch, which shows as softness. A srcSet lets a phone take
+// a small file and a Retina desktop take a large one.
+// srcset is comma-separated, and Sanity's crop parameter puts commas inside
+// the URL itself (rect=11,0,5989,3376). Unescaped, the browser splits one URL
+// into several bogus candidates. Encoding them keeps each entry intact.
+const srcsetEntry = (url, px) => `${url.replace(/,/g, '%2C')} ${px}w`;
+
+const HERO_WIDTHS = [1280, 1920, 2560, 3200, 3840];
+
 const fallback = [
     'https://images.unsplash.com/photo-1530728327726-b504480e42ec?q=100&w=2560&auto=format&fit=crop',
 ];
@@ -25,11 +36,14 @@ const Hero = () => {
                 if (!images?.length) return;
                 setFrames(
                     images.map((img) => ({
-                        desktop: urlFor(img).width(2560).quality(85).auto('format').url(),
+                        desktop: urlFor(img).width(2560).quality(90).auto('format').url(),
+                        srcSet: HERO_WIDTHS.map((px) =>
+                            srcsetEntry(urlFor(img).width(px).quality(90).auto('format').url(), px)
+                        ).join(', '),
                         // Art-directed rather than object-cover: a 16:9 frame
                         // cropped to a tall phone loses most of its width, so
                         // the mobile variant is cut to the hotspot instead.
-                        mobile: urlFor(img).width(900).height(1400).fit('crop').quality(80).auto('format').url(),
+                        mobile: urlFor(img).width(1200).height(1800).fit('crop').quality(90).auto('format').url(),
                     }))
                 );
             })
@@ -60,6 +74,8 @@ const Hero = () => {
                     <source media="(max-width: 767px)" srcSet={frame.mobile} />
                     <img
                         src={frame.desktop}
+                        srcSet={frame.srcSet}
+                        sizes="100vw"
                         alt=""
                         // Only the opening frame is needed at load; the rest
                         // arrive during the first interval.

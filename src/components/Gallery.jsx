@@ -19,7 +19,13 @@ const BATCH = 12;
 // the fallback, so a condition that fails to match errs toward the smaller
 // image rather than the larger. calc(100vw - 3rem) is the real plate width
 // below the breakpoint, where the track carries px-6 either side.
-const WIDTHS = [480, 720, 960, 1440, 1920];
+// srcset is comma-separated, and Sanity's crop parameter puts commas inside
+// the URL itself (rect=11,0,5989,3376). Unescaped, the browser splits one URL
+// into several bogus candidates. Encoding them keeps each entry intact.
+const srcsetEntry = (url, px) => `${url.replace(/,/g, '%2C')} ${px}w`;
+
+// Tops out at 2160 so a 720px plate is still fully covered at 3x.
+const WIDTHS = [480, 720, 960, 1440, 1920, 2160];
 
 /**
  * The flow.
@@ -140,10 +146,12 @@ const Gallery = () => {
                                     aria-label={`View ${photo.title || 'photograph'} larger`}
                                 >
                                     <img
-                                        src={urlFor(photo.image).width(1440).quality(85).auto('format').url()}
-                                        srcSet={WIDTHS.map(
-                                            (px) =>
-                                                `${urlFor(photo.image).width(px).quality(85).auto('format').url()} ${px}w`
+                                        src={urlFor(photo.image).width(1440).quality(90).auto('format').url()}
+                                        srcSet={WIDTHS.map((px) =>
+                                            srcsetEntry(
+                                                urlFor(photo.image).width(px).quality(90).auto('format').url(),
+                                                px
+                                            )
                                         ).join(', ')}
                                         sizes="(min-width: 768px) 720px, calc(100vw - 3rem)"
                                         alt={photo.image?.alt || photo.title || ''}
