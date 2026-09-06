@@ -11,7 +11,7 @@ import Contact from '../components/Contact';
 const Home = () => (
     <>
         <Hero />
-        <div className="flex flex-col gap-flow py-flow">
+        <div className="flex flex-col gap-flow pt-16 pb-flow">
             <Gallery />
             <About />
             <Contact />

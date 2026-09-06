@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { client, urlFor } from '../client';
 
 // Used only until the homePage singleton has an image.
@@ -25,7 +26,7 @@ const Hero = () => {
     return (
         <header
             id="home"
-            className="relative flex h-[78vh] min-h-[420px] items-end overflow-hidden bg-paper"
+            className="relative flex h-svh min-h-[480px] items-end overflow-hidden bg-paper"
         >
             <picture className="absolute inset-0">
                 <source media="(max-width: 768px)" srcSet={image.mobile} />
@@ -46,10 +47,21 @@ const Hero = () => {
             />
 
             <div className="relative mx-auto w-full max-w-[1100px] px-6 pb-12">
-                <h1 className="text-display mb-3 text-[#F4F5EE]">Anish Mohan</h1>
+                {/* Stacked the way the logo lockup stacks it, so the full
+                    business name reads at display size without wrapping by
+                    accident. */}
+                <h1 className="text-display mb-3 text-[#F4F5EE]">
+                    Anish Mohan <span className="block">Photography</span>
+                </h1>
                 <p className="text-eyebrow font-mono uppercase text-[#F4F5EE]/80">
-                    Wildlife photography &mdash; Western Ghats &amp; beyond
+                    Wildlife &amp; street &middot; Bangalore, India
                 </p>
+            </div>
+
+            {/* Nothing peeks above the fold at full height, so the cue does the
+                work the visible content used to. Sits right, clear of the name. */}
+            <div className="pointer-events-none absolute bottom-8 right-6 text-[#F4F5EE]/60 motion-safe:animate-bounce">
+                <ChevronDown className="h-5 w-5" aria-hidden="true" />
             </div>
         </header>
     );
