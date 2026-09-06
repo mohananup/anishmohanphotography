@@ -2,42 +2,77 @@ import React, { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { client, urlFor } from '../client';
 
-// Used only until the homePage singleton has an image.
-const fallbackImage =
-    "https://images.unsplash.com/photo-1530728327726-b504480e42ec?q=100&w=2560&auto=format&fit=crop";
+// Slow enough to read as a considered change rather than a distraction —
+// the original ran every 5s, which registers as movement more than as a
+// photograph.
+const INTERVAL = 9000;
+
+const fallback = [
+    'https://images.unsplash.com/photo-1530728327726-b504480e42ec?q=100&w=2560&auto=format&fit=crop',
+];
 
 const Hero = () => {
-    const [image, setImage] = useState({ desktop: fallbackImage, mobile: fallbackImage });
+    const [frames, setFrames] = useState(
+        fallback.map((url) => ({ desktop: url, mobile: url }))
+    );
+    const [index, setIndex] = useState(0);
 
     useEffect(() => {
         client
             .fetch('*[_type == "homePage"][0]{heroImages}')
             .then((data) => {
-                const first = data?.heroImages?.[0];
-                if (!first) return;
-                setImage({
-                    desktop: urlFor(first).width(2560).quality(90).auto('format').url(),
-                    mobile: urlFor(first).width(900).height(1200).fit('crop').quality(85).auto('format').url(),
-                });
+                const images = data?.heroImages;
+                if (!images?.length) return;
+                setFrames(
+                    images.map((img) => ({
+                        desktop: urlFor(img).width(2560).quality(85).auto('format').url(),
+                        // Art-directed rather than object-cover: a 16:9 frame
+                        // cropped to a tall phone loses most of its width, so
+                        // the mobile variant is cut to the hotspot instead.
+                        mobile: urlFor(img).width(900).height(1400).fit('crop').quality(80).auto('format').url(),
+                    }))
+                );
             })
-            .catch((err) => console.error('Failed to fetch hero image:', err));
+            .catch((err) => console.error('Failed to fetch hero images:', err));
     }, []);
+
+    useEffect(() => {
+        if (frames.length <= 1) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const id = setInterval(() => {
+            // Nothing to see in a background tab, and advancing there only
+            // burns battery and data.
+            if (document.hidden) return;
+            setIndex((i) => (i + 1) % frames.length);
+        }, INTERVAL);
+
+        return () => clearInterval(id);
+    }, [frames.length]);
 
     return (
         <header
             id="home"
             className="relative flex h-svh min-h-[480px] items-end overflow-hidden bg-paper"
         >
-            <picture className="absolute inset-0">
-                <source media="(max-width: 768px)" srcSet={image.mobile} />
-                <img
-                    src={image.desktop}
-                    alt=""
-                    className="h-full w-full object-cover"
-                />
-            </picture>
+            {frames.map((frame, i) => (
+                <picture key={frame.desktop} aria-hidden={i !== index}>
+                    <source media="(max-width: 767px)" srcSet={frame.mobile} />
+                    <img
+                        src={frame.desktop}
+                        alt=""
+                        // Only the opening frame is needed at load; the rest
+                        // arrive during the first interval.
+                        loading={i === 0 ? 'eager' : 'lazy'}
+                        fetchPriority={i === 0 ? 'high' : 'low'}
+                        decoding="async"
+                        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1600ms] ease-in-out motion-reduce:transition-none ${
+                            i === index ? 'opacity-100' : 'opacity-0'
+                        }`}
+                    />
+                </picture>
+            ))}
 
-            {/* Scrim — keeps the type legible whichever frame sits behind it. */}
             <div
                 className="absolute inset-0"
                 style={{
