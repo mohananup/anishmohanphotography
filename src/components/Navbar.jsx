@@ -32,28 +32,42 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Scroll-spy: underline whichever section is currently being read.
+    // Scroll-spy: the active section is the last one whose top has passed
+    // under the bar. Computed from positions on every scroll rather than
+    // from IntersectionObserver callbacks — the observer only reported
+    // sections *entering*, so scrolling back up out of Contact left the
+    // underline stuck there until another section happened to enter.
     useEffect(() => {
-        // isActive() already gates on isHome, so stale state is harmless.
         if (!isHome) return;
 
-        const els = sectionIds
-            .map((id) => document.getElementById(id))
-            .filter(Boolean);
-        if (els.length === 0) return;
+        let frame = 0;
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                const visible = entries
-                    .filter((e) => e.isIntersecting)
-                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-                if (visible) setActiveSection(visible.target.id);
-            },
-            { rootMargin: `-${BAR_HEIGHT + 8}px 0px -55% 0px`, threshold: [0, 0.25, 0.5] }
-        );
+        const compute = () => {
+            const line = BAR_HEIGHT + 8;
+            let current = null;
+            for (const id of sectionIds) {
+                const el = document.getElementById(id);
+                if (el && el.getBoundingClientRect().top <= line) current = id;
+            }
+            setActiveSection(current);
+        };
 
-        els.forEach((el) => observer.observe(el));
-        return () => observer.disconnect();
+        // Three getBoundingClientRect reads per scroll event — cheap enough
+        // that rAF throttling only added a failure mode (rAF is paused in a
+        // background tab, so the underline would go stale there).
+        const onScroll = compute;
+
+        // Deferred rather than called here, so the first paint is not a
+        // synchronous setState inside the effect body.
+        frame = requestAnimationFrame(compute);
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        return () => {
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onScroll);
+            if (frame) cancelAnimationFrame(frame);
+        };
     }, [isHome, location.pathname]);
 
     const scrollToHash = (hash) => {
