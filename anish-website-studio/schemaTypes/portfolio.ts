@@ -32,6 +32,23 @@ export default defineType({
             type: 'text',
         }),
         defineField({
+            name: 'category',
+            title: 'Category',
+            type: 'string',
+            description: 'Drives the filter chips above the gallery. Chips appear once two or more categories are in use.',
+            options: {
+                list: [
+                    {title: 'Mammals', value: 'Mammals'},
+                    {title: 'Birds', value: 'Birds'},
+                    {title: 'Reptiles', value: 'Reptiles'},
+                    {title: 'Insects', value: 'Insects'},
+                    {title: 'Wetlands', value: 'Wetlands'},
+                    {title: 'Landscapes', value: 'Landscapes'},
+                ],
+                layout: 'dropdown',
+            },
+        }),
+        defineField({
             name: 'location',
             title: 'Location',
             type: 'string',

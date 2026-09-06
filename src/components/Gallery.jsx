@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { client, urlFor } from '../client';
 
+// Mirrors the list in the portfolio schema; order only, not a whitelist.
+const CATEGORY_ORDER = ['Mammals', 'Birds', 'Reptiles', 'Insects', 'Wetlands', 'Landscapes'];
+
 /**
  * The flow.
  *
@@ -18,7 +21,7 @@ const Gallery = () => {
 
     useEffect(() => {
         const query = `*[_type == "portfolio" && defined(image)] | order(order asc, _createdAt desc){
-            _id, title, caption, location, date,
+            _id, title, caption, location, date, category,
             "dims": image.asset->metadata.dimensions,
             image
         }`;
@@ -48,16 +51,21 @@ const Gallery = () => {
 
     if (loading || photos.length === 0) return null;
 
-    // Chips are derived from the locations actually present, so they appear
-    // on their own as the field gets filled in and never need maintaining.
-    const locations = [...new Set(photos.map((p) => p.location).filter(Boolean))].sort();
-    const shown = filter === 'all' ? photos : photos.filter((p) => p.location === filter);
+    // Chips derive from the categories actually in use, so they appear on
+    // their own as photographs get tagged and never need maintaining here.
+    // CATEGORY_ORDER only fixes the order; unknown values still show, last.
+    const present = new Set(photos.map((p) => p.category).filter(Boolean));
+    const categories = [
+        ...CATEGORY_ORDER.filter((c) => present.has(c)),
+        ...[...present].filter((c) => !CATEGORY_ORDER.includes(c)).sort(),
+    ];
+    const shown = filter === 'all' ? photos : photos.filter((p) => p.category === filter);
 
     return (
         <section id="gallery" className="mx-auto w-full max-w-[1100px] px-6">
-            {locations.length > 1 && (
-                <div className="mb-flow flex flex-wrap gap-2" role="group" aria-label="Filter by location">
-                    {['all', ...locations].map((loc) => (
+            {categories.length > 1 && (
+                <div className="mb-flow flex flex-wrap gap-2" role="group" aria-label="Filter by category">
+                    {['all', ...categories].map((loc) => (
                         <button
                             key={loc}
                             type="button"
