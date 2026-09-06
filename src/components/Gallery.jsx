@@ -14,6 +14,11 @@ const BATCH = 12;
 // Widths the srcSet offers. Previously every photograph was requested at
 // 1440px, including on a phone, which is roughly four times the pixels a
 // 375px screen can use.
+//
+// sizes puts the desktop case in the media condition and the mobile case in
+// the fallback, so a condition that fails to match errs toward the smaller
+// image rather than the larger. calc(100vw - 3rem) is the real plate width
+// below the breakpoint, where the track carries px-6 either side.
 const WIDTHS = [480, 720, 960, 1440, 1920];
 
 /**
@@ -131,7 +136,7 @@ const Gallery = () => {
                                             (px) =>
                                                 `${urlFor(photo.image).width(px).quality(85).auto('format').url()} ${px}w`
                                         ).join(', ')}
-                                        sizes="(max-width: 767px) 100vw, 720px"
+                                        sizes="(min-width: 768px) 720px, calc(100vw - 3rem)"
                                         alt={photo.image?.alt || photo.title || ''}
                                         width={w}
                                         height={h}
