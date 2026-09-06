@@ -6,9 +6,6 @@ import logoMark from '../assets/logo-mark.png';
 
 const navLinks = [
     { name: 'Work', path: '#gallery' },
-    { name: 'Profile', path: '#profile' },
-    { name: 'Projects', path: '/projects' },
-    { name: 'Portfolio', path: '/portfolio' },
     { name: 'Journal', path: '/blog' },
     { name: 'Contact', path: '#contact' },
 ];

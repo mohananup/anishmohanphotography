@@ -1,18 +1,18 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import BlogPage from './pages/BlogPage';
-import PortfolioPage from './pages/PortfolioPage';
-import ProjectsPage from './pages/ProjectsPage';
 
 function App() {
   return (
     <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/blog" element={<BlogPage />} />
-        <Route path="/portfolio" element={<PortfolioPage />} />
+        {/* /portfolio and /projects existed until the flow absorbed them.
+            Send old links and bookmarks home rather than rendering an
+            empty layout, which is what an unmatched route does here. */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>
   );
